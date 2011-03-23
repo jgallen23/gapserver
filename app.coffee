@@ -7,8 +7,7 @@ cwd = process.cwd()
 config = require "#{ cwd }/config"
 
 for lib in config.ui.libs
-	config.ui['common']['js'].push "lib/#{ lib }-min.js"
-
+	config.ui['common']['js'].splice 0, 0, "lib/#{ lib }-min.js"
 
 mash = (profile, type, debug = false) ->
 	if !debug
@@ -33,6 +32,7 @@ app.configure () ->
 	coffeeDir = "#{ cwd }/coffee"
 	staticDir = "#{ cwd }/ui"
 	app.use express.compiler src: coffeeDir, dest: staticDir, enable: ['coffeescript']
+	app.use express.static staticDir
 	app.use "/ui", express.static staticDir
 	app.use "/lib", express.static "#{ __dirname }/lib"
 	app.use express.errorHandler { dumpExceptions: true, showStack: true }
