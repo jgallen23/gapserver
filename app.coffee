@@ -5,6 +5,7 @@ app = express.createServer()
 cwd = process.cwd()
 
 config = require "#{ cwd }/config"
+Masher = require("./ext/node-mash/mash")
 
 for lib in config.ui.scriptLibs
 	config.ui['common']['js'].splice 0, 0, "lib/#{ lib }-min.js"
@@ -12,16 +13,7 @@ for lib in config.ui.scriptLibs
 for lib in config.ui.styleLibs
 	config.ui['common']['css'].splice 0, 0, "lib/#{ lib }.css"
 
-mash = (profile, type, debug = false) ->
-	if !debug
-		files = config.ui[profile][type]
-		html = for file in files
-			if type is "css"
-				"<link href='#{ file }' type='text/css' rel='stylesheet'>"
-			else if type is "js"
-				"<script src='#{ file }'></script>"
-		html.join ''
-
+masher = new Masher config.ui
 
 app.configure () ->
 	app.use express.methodOverride()
@@ -41,7 +33,7 @@ app.configure () ->
  
 
 app.get "/", (req, res) ->
-	res.local "mash", mash
+	res.local "masher", masher
 	res.local "debug", false
 
 	res.render "index", test: 'woot'
