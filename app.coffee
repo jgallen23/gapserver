@@ -32,11 +32,10 @@ app.configure () ->
 	app.set "view engine", config.templateEngine
 	app.set "view options", { layout: false, open: "{{", close: "}}" }
 
-	coffeeDir = "#{ cwd }/coffee"
-	staticDir = "#{ cwd }/ui"
-	app.use express.compiler src: coffeeDir, dest: staticDir, enable: ['coffeescript']
-	app.use express.static staticDir
-	app.use "/ui", express.static staticDir
+	coffeeCompiledDir = "#{ cwd }/coffee/compiled"
+	app.use "/compiled", express.compiler src: "#{ cwd }/coffee", dest: coffeeCompiledDir, enable: ['coffeescript']
+	app.use "/compiled", express.static coffeeCompiledDir
+	app.use "/ui", express.static "#{ cwd }/ui"
 	app.use "/lib", express.static "#{ __dirname }/lib"
 	app.use express.errorHandler { dumpExceptions: true, showStack: true }
  
