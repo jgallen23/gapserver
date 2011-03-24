@@ -29,7 +29,7 @@ app.configure () ->
 	app.use app.router
 
 	app.set "views", "#{ cwd }/templates"
-	app.set "view engine", config.ui.templateEngine
+	app.set "view engine", config.templateEngine
 	app.set "view options", { layout: false, open: "{{", close: "}}" }
 
 	coffeeDir = "#{ cwd }/coffee"
