@@ -6,8 +6,11 @@ cwd = process.cwd()
 
 config = require "#{ cwd }/config"
 
-for lib in config.ui.libs
+for lib in config.ui.scriptLibs
 	config.ui['common']['js'].splice 0, 0, "lib/#{ lib }-min.js"
+
+for lib in config.ui.styleLibs
+	config.ui['common']['css'].splice 0, 0, "lib/#{ lib }.css"
 
 mash = (profile, type, debug = false) ->
 	if !debug
