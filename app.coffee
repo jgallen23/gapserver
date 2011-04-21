@@ -52,7 +52,7 @@ else
     compiledDir = "#{ cwd }/compiled"
     app.use "/compiled", express.compiler src: "#{ cwd }/app", dest: compiledDir, enable: ['less', 'coffeescript']
     app.use "/compiled", express.static compiledDir
-    app.use express.static "#{ cwd }/public"
+    app.use "/ui", express.static "#{ cwd }/ui"
 
     app.use express.errorHandler { dumpExceptions: true, showStack: true }
    
