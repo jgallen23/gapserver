@@ -59,7 +59,12 @@ if (args["--startapp"]) {
         locals = { 
             debug: false,
             phonegap: true,
-            config: config
+            config: config,
+            weinre: function(server, port) {
+                if (!port)
+                    port = 8080;
+                return '<script>(function(e){e.setAttribute("src","http://'+server+':'+port+'/target/target-script-min.js");document.getElementsByTagName("body")[0].appendChild(e);})(document.createElement("script"))</script>';
+            }
         };
 
         res.render("index", { locals: locals }, function(err, html) {
