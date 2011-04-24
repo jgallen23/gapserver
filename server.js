@@ -17,7 +17,8 @@ if (args["--build"]) {
     var jade = require("jade");
     locals = { 
         debug: false,
-        phonegap: true
+        phonegap: true,
+        config: config
     };
 
     jade.renderFile("templates/index.jade", { locals: locals }, function(err, html) {
@@ -65,10 +66,14 @@ if (args["--build"]) {
 
 
     app.get("/", function(req, res) { 
-        res.local("debug", false);
-        res.local("phonegap", false);
 
-        res.render("index");
+        locals = { 
+            debug: false,
+            phonegap: false,
+            config: config
+        };
+
+        res.render("index", { locals: locals });
     });
 
     app.get("/build", function(req, res) {
