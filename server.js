@@ -49,6 +49,7 @@ if (args["--startapp"]) {
         app.use("/compiled", express.static(compiledDir));
 
         app.use("/ui", express.static(cwd+"/ui"));
+        app.use("/app", express.static(cwd+"/app"));
 
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
