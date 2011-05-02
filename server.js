@@ -14,8 +14,8 @@ else
     config = require(__dirname+"/config");
 
 var port = 3000;
-if (args["--build"]) {
-	var b = args["--build"];
+if (args["--generate"]) {
+	var b = args["--generate"];
 	if (typeof b === "string")
 		build = b;
     port = 3003;
@@ -90,7 +90,7 @@ if (args["--startapp"]) {
 
     app.listen(port, "0.0.0.0");
 
-    if (args['--build']) {
+    if (args['--generate']) {
         console.log("Building index.html");
         var http = require("http");
         http.get({ host: 'localhost', path: '/', port: port }, function(res) {
