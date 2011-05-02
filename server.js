@@ -14,7 +14,7 @@ else
 
 var port = 3000;
 if (args["--build"])
-    port = 3001;
+    port = 3003;
 
 if (args["--startapp"]) {
     var source = __dirname+"/structure";
