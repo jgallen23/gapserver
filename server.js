@@ -6,6 +6,7 @@ var fs = require("fs");
 
 var cwd = process.cwd();
 
+var build = "debug";
 var config = null;
 if (path.existsSync(cwd+"/config.js"))
     config = require(cwd+"/config");
@@ -13,8 +14,12 @@ else
     config = require(__dirname+"/config");
 
 var port = 3000;
-if (args["--build"])
+if (args["--build"]) {
+	var b = args["--build"];
+	if (typeof b === "string")
+		build = b;
     port = 3003;
+}
 
 if (args["--startapp"]) {
     var source = __dirname+"/structure";
@@ -27,7 +32,7 @@ if (args["--startapp"]) {
         app.use(app.router);
 
         app.set("views", cwd+"/templates");
-        app.set("view engine", config.templateEngine);
+        app.set("view engine", config.settings.templateEngine);
         app.set("view options", { layout: false, open: "{{", close: "}}" });
 
 
@@ -35,7 +40,7 @@ if (args["--startapp"]) {
             return stylus(str).set('filename', path).set('compress', true);
         };
 
-        if (config.useStylus) {
+        if (config.settings.useStylus) {
             var stylus = require("stylus");
             app.use("/ui", stylus.middleware({
                 src: cwd + '/ui',
@@ -60,7 +65,7 @@ if (args["--startapp"]) {
         locals = { 
             debug: false,
             phonegap: true,
-            config: config,
+            config: config[build],
             weinre: function(server, port) {
                 if (!port)
                     port = 8080;

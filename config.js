@@ -1,4 +1,10 @@
 module.exports = {
-    templateEngine: 'jade',
-    useStylus: true
+	settings: {
+		templateEngine: 'jade',
+		useStylus: true
+	},
+	debug: {
+	},
+	release: {
+	}
 };
