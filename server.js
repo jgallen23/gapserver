@@ -75,7 +75,8 @@ if (args["--startapp"]) {
 
         res.render("index", { locals: locals }, function(err, html) {
             fs.writeFile("index.html", html, function(err) {
-                console.log(err);
+				if (err)
+					console.log(err);
             });
         });
         locals.phonegap = false;
