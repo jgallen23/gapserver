@@ -98,6 +98,7 @@ if (args["--startapp"]) {
         });
         
     } else {
+		build = (config['local'])?"local":"debug";
         console.log("Server started on port " + port);
     }
 }
