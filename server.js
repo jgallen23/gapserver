@@ -14,7 +14,9 @@ else
     config = require(__dirname+"/config");
 
 var port = 3000;
+var generating = false;
 if (args["--generate"]) {
+	generating = true;
 	var b = args["--generate"];
 	if (typeof b === "string")
 		build = b;
@@ -74,10 +76,10 @@ if (args["--startapp"]) {
         };
 
         res.render("index", { locals: locals }, function(err, html) {
-            fs.writeFile("index.html", html, function(err) {
-				if (err)
-					console.log(err);
-            });
+			if (generating) {
+				console.log(html);
+				fs.writeFileSync(path.join(cwd, "index.html"), html);
+			}
         });
         locals.phonegap = false;
         res.render("index", { locals: locals });
@@ -91,7 +93,7 @@ if (args["--startapp"]) {
 
     app.listen(port, "0.0.0.0");
 
-    if (args['--generate']) {
+	if (generating) {
         console.log("Building index.html");
         var http = require("http");
         http.get({ host: 'localhost', path: '/', port: port }, function(res) {
