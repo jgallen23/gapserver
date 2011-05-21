@@ -3,15 +3,16 @@ html(lang="en")
   head
     title Phonegap App
     meta(name="viewport", content="width = device-width, initial-scale = 1.0, user-scalable = no, maximum-scale = 1.0")
+    link(rel='stylesheet', href="/ui/stylesheets/app.css")
     - if (phonegap)
       script(src="phonegap.0.9.5.min.js")
-      script
-        window.isPhoneGap = true;
-    - else
-      script
-        window.isPhoneGap = false;
+    script
+      window.isPhoneGap = #{ (phonegap) };
+      window.debug = #{ debug };
   body
     p Welcome to your new app
+    p Your current build configuration is #{config.build}
+    script(src="/app/controllers/app.js")
     script
       var ready = function() {
         console.log("ready!");

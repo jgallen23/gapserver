@@ -6,13 +6,12 @@ html(lang="en")
     link(rel='stylesheet', href="/ui/stylesheets/app.css")
     - if (phonegap)
       script(src="phonegap.0.9.5.min.js")
-      script
-        window.isPhoneGap = true;
-    - else
-      script
-        window.isPhoneGap = false;
+    script
+      window.isPhoneGap = #{ (phonegap) };
+      window.debug = #{ debug };
   body
     p Welcome to your new app
+    p Your current build configuration is #{config.build}
     script(src="/app/controllers/app.js")
     script
       var ready = function() {

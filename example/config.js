@@ -4,9 +4,12 @@ module.exports = {
     useStylus: true
   },
   web: {
+    build: 'web'
   },
   debug: {
+    build: 'debug'
   },
   release: {
+    build: 'release'
   }
 };
