@@ -1,3 +1,0 @@
-[submodule "ext/node-mash"]
-	path = ext/node-mash
-	url = git://github.com/jgallen23/node-mash.git
