@@ -24,9 +24,11 @@ if (args["--generate"]) {
 }
 
 if (args["--startapp"]) {
-  var source = __dirname+"/structure";
+  var source = __dirname+"/structure/";
   var destination = cwd+"/";
-  require("child_process").spawn("cp", ['-r', source, destination]);
+  var proc = require("child_process");
+  proc.spawn("cp", ['-r', source, destination]);
+  proc.spawn("cp", [__dirname+"/config.js", destination]);
 } else {
   app.configure(function() {
     app.use(express.methodOverride());
@@ -51,9 +53,7 @@ if (args["--startapp"]) {
       }));
     }
 
-    var compiledDir = cwd+"/compiled";
-    app.use("/compiled", express.compiler({ src: cwd+"/app", dest: compiledDir, enable: ['less', 'coffeescript']}));
-    app.use("/compiled", express.static(compiledDir));
+    app.use("/app", express.compiler({ src: cwd+"/app", dest: cwd+"/app", enable: ['coffeescript']}));
 
     app.use("/ui", express.static(cwd+"/ui"));
     app.use("/app", express.static(cwd+"/app"));
