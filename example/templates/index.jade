@@ -1,0 +1,25 @@
+!!! 5
+html(lang="en")
+  head
+    title Phonegap App
+    meta(name="viewport", content="width = device-width, initial-scale = 1.0, user-scalable = no, maximum-scale = 1.0")
+    link(rel='stylesheet', href="/ui/stylesheets/app.css")
+    - if (phonegap)
+      script(src="phonegap.0.9.5.min.js")
+      script
+        window.isPhoneGap = true;
+    - else
+      script
+        window.isPhoneGap = false;
+  body
+    p Welcome to your new app
+    script(src="/app/controllers/app.js")
+    script
+      var ready = function() {
+        console.log("ready!");
+      }
+
+      if (isPhoneGap)
+        document.addEventListener("deviceready", ready);
+      else
+        ready()
