@@ -1,0 +1,12 @@
+{
+    "name": "gapserver",
+    "version": "1.0.0",
+    "dependencies": {
+        "coffee-script": "*",
+        "express": "*",
+        "jade": "*",
+        "argsparser": "*",
+        "stylus": "*"
+    }
+}
+
