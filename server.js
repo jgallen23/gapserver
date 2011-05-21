@@ -19,7 +19,7 @@ if (args["--generate"]) {
   generating = true;
   var b = args["--generate"];
   if (typeof b === "string")
-    build = b;
+    build = b.toLowerCase();
   port = 3003;
 }
 
@@ -101,7 +101,7 @@ if (args["--startapp"]) {
     });
     
   } else {
-    build = (config['local'])?"local":"debug";
+    build = (config.web)?"web":"debug";
     console.log("Server started on port " + port);
   }
 }

@@ -3,8 +3,10 @@ module.exports = {
     templateEngine: 'jade',
     useStylus: true
   },
-  Debug: {
+  web: {
   },
-  Release: {
+  debug: {
+  },
+  release: {
   }
 };
