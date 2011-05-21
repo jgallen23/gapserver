@@ -3,6 +3,8 @@ var args = require("argsparser").parse();
 var app = express.createServer();
 var path = require("path");
 var fs = require("fs");
+var stylus = require("stylus");
+var jade = require("jade");
 
 var cwd = process.cwd();
 
@@ -14,14 +16,17 @@ else
   config = require(__dirname+"/config");
 
 var port = 3000;
-var generating = false;
-if (args["--generate"]) {
-  generating = true;
-  var b = args["--generate"];
-  if (typeof b === "string")
-    build = b.toLowerCase();
-  port = 3003;
-}
+
+var options = { 
+  debug: true,
+  phonegap: false,
+  config: config[build],
+  weinre: function(server, port) {
+    if (!port)
+      port = 8080;
+    return '<script>(function(e){e.setAttribute("src","http://'+server+':'+port+'/target/target-script-min.js");document.getElementsByTagName("body")[0].appendChild(e);})(document.createElement("script"))</script>';
+  }
+};
 
 if (args["--startapp"]) {
   var source = __dirname+"/structure/";
@@ -29,7 +34,55 @@ if (args["--startapp"]) {
   var proc = require("child_process");
   proc.spawn("cp", ['-r', source, destination]);
   proc.spawn("cp", [__dirname+"/config.js", destination]);
+} else if (args["--generate"]) {
+  var b = args["--generate"];
+  if (typeof b === "string")
+    build = b.toLowerCase();
+  options.config = config[build];
+  options.debug = (build != "release");
+
+  //generate stylus files
+  var generateStylus = function() {
+    var compileFile = function(file) {
+      console.log(file);
+      fs.readFile(file, 'utf8', function(err, str) {
+        stylus(str).set('filename', file).set('compress', true).render(function(err, css) {
+          var cssFile = file.replace(".styl", ".css");
+          fs.writeFile(cssFile, css, function(err) {
+            console.log("Created: "+cssFile);
+          });
+        });
+      });
+    };
+    var dir = cwd+"/ui/stylesheets";
+    fs.readdir(dir, function(err, files) {
+      files.filter(function(path){
+        return path.match(/\.styl$/);
+      }).map(function(path){
+        return dir + '/' + path;
+      }).forEach(compileFile);
+    });
+  };
+
+
+  var generateIndex = function() {
+    options.phonegap = true;
+    var file = cwd+"/templates/index.jade";
+    jade.renderFile(file, { locals: options }, function(err, html) {
+      if (err)
+        throw err
+      fs.writeFile(cwd+"/index.html", html, function(err) {
+        console.log("Created: index.html");
+      });
+    });
+  };
+
+  generateStylus();
+  generateIndex();
+
+    
 } else {
+  options.config = config.web;
   app.configure(function() {
     app.use(express.methodOverride());
     app.use(express.bodyParser());
@@ -39,19 +92,15 @@ if (args["--startapp"]) {
     app.set("view engine", config.settings.templateEngine);
     app.set("view options", { layout: false, open: "{{", close: "}}" });
 
-
     var stylusCompile = function(str, path) {
       return stylus(str).set('filename', path).set('compress', true);
     };
-
-    if (config.settings.useStylus) {
-      var stylus = require("stylus");
-      app.use("/ui", stylus.middleware({
-        src: cwd + '/ui',
-        dest: cwd + '/ui',
-        compile: stylusCompile
-      }));
-    }
+    var stylus = require("stylus");
+    app.use("/ui", stylus.middleware({
+      src: cwd + '/ui',
+      dest: cwd + '/ui',
+      compile: stylusCompile
+    }));
 
     app.use("/app", express.compiler({ src: cwd+"/app", dest: cwd+"/app", enable: ['coffeescript']}));
 
@@ -61,49 +110,12 @@ if (args["--startapp"]) {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   });
 
-
   app.get("/", function(req, res) { 
-
-    locals = { 
-      debug: false,
-      phonegap: true,
-      config: config[build],
-      weinre: function(server, port) {
-        if (!port)
-          port = 8080;
-        return '<script>(function(e){e.setAttribute("src","http://'+server+':'+port+'/target/target-script-min.js");document.getElementsByTagName("body")[0].appendChild(e);})(document.createElement("script"))</script>';
-      }
-    };
-
-    res.render("index", { locals: locals }, function(err, html) {
-      if (generating) {
-        console.log(html);
-        fs.writeFileSync(path.join(cwd, "index.html"), html);
-      }
-    });
-    locals.phonegap = false;
-    res.render("index", { locals: locals });
+    res.render("index", { locals: options });
   });
-
-  app.get("/build", function(req, res) {
-    fs.readFile("index.html", function(err, data) {
-      res.send(data);
-    });
-  });
-
   app.listen(port, "0.0.0.0");
-
-  if (generating) {
-    console.log("Building index.html");
-    var http = require("http");
-    http.get({ host: 'localhost', path: '/', port: port }, function(res) {
-      app.close();
-    });
-    
-  } else {
-    build = (config.web)?"web":"debug";
-    console.log("Server started on port " + port);
-  }
+  console.log("Server started on port " + port);
 }
+
 
 
