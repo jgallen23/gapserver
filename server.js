@@ -5,6 +5,7 @@ var path = require("path");
 var fs = require("fs");
 var stylus = require("stylus");
 var jade = require("jade");
+var coffeeScript = require("coffee-script");
 
 var cwd = process.cwd();
 
@@ -18,9 +19,10 @@ else
 var port = 3000;
 
 var options = { 
-  debug: true,
+  debug: false,
   phonegap: false,
   config: config[build],
+  build: build,
   weinre: function(server, port) {
     if (!port)
       port = 8080;
@@ -39,12 +41,22 @@ if (args["--startapp"]) {
   if (typeof b === "string")
     build = b.toLowerCase();
   options.config = config[build];
+  options.build = build;
   options.debug = (build != "release");
 
-  //generate stylus files
+  var findFiles = function(dir, search, cb) {
+    fs.readdir(dir, function(err, files) {
+      var filteredFiles = files.filter(function(path){
+        return path.match(search);
+      }).map(function(path){
+        return dir + '/' + path;
+      });
+      cb(filteredFiles);
+    });
+  };
+
   var generateStylus = function() {
     var compileFile = function(file) {
-      console.log(file);
       fs.readFile(file, 'utf8', function(err, str) {
         stylus(str).set('filename', file).set('compress', true).render(function(err, css) {
           var cssFile = file.replace(".styl", ".css");
@@ -55,22 +67,35 @@ if (args["--startapp"]) {
       });
     };
     var dir = cwd+"/ui/stylesheets";
-    fs.readdir(dir, function(err, files) {
-      files.filter(function(path){
-        return path.match(/\.styl$/);
-      }).map(function(path){
-        return dir + '/' + path;
-      }).forEach(compileFile);
+    findFiles(dir, /\.styl$/, function(files) {
+      files.forEach(compileFile);
     });
   };
 
+
+  var generateCoffee = function() { 
+    var compileFile = function(file) {
+      fs.readFile(file, 'utf8', function(err, str) {
+        var js = coffeeScript.compile(str);
+        var jsFile = file.replace(".coffee", ".js");
+        fs.writeFile(jsFile, js, function(err) {
+          console.log("Created: "+jsFile);
+        });
+      });
+    };
+    var dir = cwd+"/app/controllers";
+    findFiles(dir, /\.coffee$/, function(files) {
+      files.forEach(compileFile); 
+    });
+
+  };
 
   var generateIndex = function() {
     options.phonegap = true;
     var file = cwd+"/templates/index.jade";
     jade.renderFile(file, { locals: options }, function(err, html) {
       if (err)
-        throw err
+        throw err;
       fs.writeFile(cwd+"/index.html", html, function(err) {
         console.log("Created: index.html");
       });
@@ -78,11 +103,13 @@ if (args["--startapp"]) {
   };
 
   generateStylus();
+  generateCoffee();
   generateIndex();
 
     
 } else {
   options.config = config.web;
+  options.build = "web";
   app.configure(function() {
     app.use(express.methodOverride());
     app.use(express.bodyParser());
