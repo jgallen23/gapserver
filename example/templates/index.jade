@@ -3,7 +3,7 @@ html(lang="en")
   head
     title Phonegap App
     meta(name="viewport", content="width = device-width, initial-scale = 1.0, user-scalable = no, maximum-scale = 1.0")
-    link(rel='stylesheet', href="/stylus/app.css")
+    link(rel='stylesheet', href="stylus/app.css")
     - if (phonegap)
       script(src="phonegap.0.9.5.min.js")
     script
@@ -12,7 +12,7 @@ html(lang="en")
   body
     p Welcome to your new app
     p Your current build configuration is #{config.build}
-    script(src="/scripts/app.js")
+    script(src="scripts/app.js")
     script
       var ready = function() {
         console.log("ready!");

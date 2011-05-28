@@ -1,12 +1,13 @@
 {
-    "name": "gapserver",
-    "version": "1.0.0",
-    "dependencies": {
-        "coffee-script": "*",
-        "express": "*",
-        "jade": "*",
-        "argsparser": "*",
-        "stylus": "*"
-    }
+  "name": "gapserver",
+  "version": "1.0.0",
+  "dependencies": {
+    "walk": "*",
+    "coffee-script": "*",
+    "express": "*",
+    "jade": "*",
+    "argsparser": "*",
+    "stylus": "*"
+  }
 }
 

@@ -6,6 +6,7 @@ var fs = require("fs");
 var stylus = require("stylus");
 var jade = require("jade");
 var coffeeScript = require("coffee-script");
+var walk = require("walk");
 
 var cwd = process.cwd();
 
@@ -45,13 +46,17 @@ if (args["--startapp"]) {
   options.debug = (build != "release");
 
   var findFiles = function(dir, search, cb) {
-    fs.readdir(dir, function(err, files) {
-      var filteredFiles = files.filter(function(path){
-        return path.match(search);
-      }).map(function(path){
-        return dir + '/' + path;
-      });
-      cb(filteredFiles);
+    var files = [];
+    var walker = walk.walkSync(dir);
+
+    walker.on("file", function(root, fileStats, next) {
+      if (fileStats.name.match(search)) {
+        files.push(root+"/"+fileStats.name);
+      }
+      next();
+    });
+    walker.on("end", function() {
+      cb(files);
     });
   };
 
@@ -66,8 +71,7 @@ if (args["--startapp"]) {
         });
       });
     };
-    var dir = cwd+"/ui/stylesheets";
-    findFiles(dir, /\.styl$/, function(files) {
+    findFiles(cwd, /\.styl$/, function(files) {
       files.forEach(compileFile);
     });
   };
@@ -83,8 +87,7 @@ if (args["--startapp"]) {
         });
       });
     };
-    var dir = cwd+"/app/controllers";
-    findFiles(dir, /\.coffee$/, function(files) {
+    findFiles(cwd, /\.coffee$/, function(files) {
       files.forEach(compileFile); 
     });
 
