@@ -123,16 +123,17 @@ if (args["--startapp"]) {
       return stylus(str).set('filename', path).set('compress', true);
     };
     var stylus = require("stylus");
-    app.use("/ui", stylus.middleware({
-      src: cwd + '/ui',
-      dest: cwd + '/ui',
+    app.use(stylus.middleware({
+      src: cwd,
+      dest: cwd,
       compile: stylusCompile
     }));
 
-    app.use("/app", express.compiler({ src: cwd+"/app", dest: cwd+"/app", enable: ['coffeescript']}));
+    app.use(express.compiler({ src: cwd, dest: cwd, enable: ['coffeescript']}));
 
     app.use("/ui", express.static(cwd+"/ui"));
     app.use("/app", express.static(cwd+"/app"));
+    app.use(express.static(cwd));
 
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   });
