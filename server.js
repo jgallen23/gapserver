@@ -10,12 +10,17 @@ var walk = require("walk");
 
 var cwd = process.cwd();
 
+var extend = function(defaults, options) {
+  for (var key in defaults) {
+    if (options[key]) defaults[key] = options[key];
+  }
+};
+
 var build = "debug";
-var config = null;
+var config = require(__dirname+"/config");
 if (path.existsSync(cwd+"/config.js"))
-  config = require(cwd+"/config");
-else
-  config = require(__dirname+"/config");
+  customConfig = require(cwd+"/config");
+  extend(config, customConfig);
 
 var port = 3000;
 

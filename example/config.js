@@ -1,8 +1,4 @@
 module.exports = {
-  settings: {
-    templateEngine: 'jade',
-    useStylus: true
-  },
   web: {
     build: 'web'
   },
