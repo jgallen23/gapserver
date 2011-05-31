@@ -12,6 +12,7 @@ html(lang="en")
   body
     p Welcome to your new app
     p Your current build configuration is #{config.build}
+    != partial("partial.jade")
     script(src="scripts/app.js")
     script
       var ready = function() {
