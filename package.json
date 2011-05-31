@@ -8,6 +8,9 @@
     "jade": "*",
     "argsparser": "*",
     "stylus": "*"
+  },
+  "bin" : {
+    "gapserver" : "./server.js" 
   }
 }
 

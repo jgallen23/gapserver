@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var express = require("express");
 var args = require("argsparser").parse();
 var app = express.createServer();
