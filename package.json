@@ -1,6 +1,14 @@
 {
   "name": "gapserver",
+  "description": "a server for building out phonegap apps",
   "version": "1.0.0",
+  "homepage": "https://github.com/jgallen23/gapserver",
+  "authors": ["Greg Allen <@jgallen23>"],
+  "repository": {
+    "type": "git",
+    "url": "https://jgallen23@github.com/jgallen23/gapserver.git"
+  },
+  "keywords": ["phonegap"],
   "dependencies": {
     "walk": "*",
     "coffee-script": "*",
