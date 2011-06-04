@@ -19,9 +19,10 @@ var extend = function(defaults, options) {
 
 var build = "debug";
 var config = require(__dirname+"/config");
-if (path.existsSync(cwd+"/config.js"))
+if (path.existsSync(cwd+"/config.js")) {
   customConfig = require(cwd+"/config");
   extend(config, customConfig);
+}
 
 var port = 3000;
 
@@ -42,7 +43,7 @@ if (args["--startapp"]) {
   var destination = cwd+"/";
   var proc = require("child_process");
   proc.spawn("cp", ['-r', source, destination]);
-  proc.spawn("cp", [__dirname+"/config.js", destination]);
+  //proc.spawn("cp", [__dirname+"/config.js", destination]);
 } else if (args["--generate"]) {
   var b = args["--generate"];
   if (typeof b === "string")
