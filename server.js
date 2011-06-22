@@ -127,7 +127,7 @@ if (args["--startapp"]) {
 
     app.set("views", cwd+"/templates");
     app.set("view engine", config.settings.templateEngine);
-    app.set("view options", { layout: false, open: "{{", close: "}}" });
+    app.set("view options", { layout: false });
 
     var stylusCompile = function(str, path) {
       return stylus(str).set('filename', path).set('compress', true);
