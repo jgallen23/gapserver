@@ -6,6 +6,7 @@ var path = require("path");
 var fs = require("fs");
 var stylus = require("stylus");
 var jade = require("jade");
+var ejs = require("ejs");
 var coffeeScript = require("coffee-script");
 var walk = require("walk");
 
@@ -102,14 +103,23 @@ if (args["--startapp"]) {
 
   var generateIndex = function() {
     options.phonegap = true;
-    var file = cwd+"/templates/index.jade";
-    jade.renderFile(file, { locals: options }, function(err, html) {
-      if (err)
-        throw err;
+    if (config.settings.templateEngine == "jade") {
+      var file = cwd+"/templates/index.jade";
+      jade.renderFile(file, { locals: options }, function(err, html) {
+        if (err)
+          throw err;
+        fs.writeFile(cwd+"/index.html", html, function(err) {
+          console.log("Created: index.html");
+        });
+      });
+    } else if (config.settings.templateEngine == "ejs") {
+      var file = cwd+"/templates/index.ejs";
+      var template = fs.readFileSync(file, 'utf8');
+      var html = ejs.render(template, { locals: options });
       fs.writeFile(cwd+"/index.html", html, function(err) {
         console.log("Created: index.html");
       });
-    });
+    }
   };
 
   generateStylus();
