@@ -9,6 +9,7 @@ var jade = require("jade");
 var ejs = require("ejs");
 var coffeeScript = require("coffee-script");
 var walk = require("walk");
+var smoosher = require("./smoosher");
 
 var cwd = process.cwd();
 
@@ -36,7 +37,8 @@ var options = {
     if (!port)
       port = 8080;
     return '<script>(function(e){e.setAttribute("src","http://'+server+':'+port+'/target/target-script-min.js");document.getElementsByTagName("body")[0].appendChild(e);})(document.createElement("script"))</script>';
-  }
+  },
+  smoosher: smoosher()
 };
 
 if (args["--startapp"]) {

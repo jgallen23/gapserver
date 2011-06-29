@@ -16,7 +16,8 @@
     "jade": "*",
     "ejs": "*",
     "argsparser": "*",
-    "stylus": "*"
+    "stylus": "*",
+    "smoosh": "*"
   },
   "bin" : {
     "gapserver" : "./server.js" 
