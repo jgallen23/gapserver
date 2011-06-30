@@ -10,6 +10,7 @@ var ejs = require("ejs");
 var coffeeScript = require("coffee-script");
 var walk = require("walk");
 var smoosher = require("./smoosher");
+var R = require("resistance").R;
 
 var cwd = process.cwd();
 
@@ -37,8 +38,7 @@ var options = {
     if (!port)
       port = 8080;
     return '<script>(function(e){e.setAttribute("src","http://'+server+':'+port+'/target/target-script-min.js");document.getElementsByTagName("body")[0].appendChild(e);})(document.createElement("script"))</script>';
-  },
-  smoosher: smoosher()
+  }
 };
 
 if (args["--startapp"]) {
@@ -70,40 +70,50 @@ if (args["--startapp"]) {
     });
   };
 
-  var generateStylus = function() {
+  var generateStylus = function(cb) {
     var compileFile = function(file) {
-      fs.readFile(file, 'utf8', function(err, str) {
-        stylus(str).set('filename', file).set('compress', true).render(function(err, css) {
-          var cssFile = file.replace(".styl", ".css");
-          fs.writeFile(cssFile, css, function(err) {
-            console.log("Created: "+cssFile);
+      return function(cb2) {
+        fs.readFile(file, 'utf8', function(err, str) {
+          stylus(str).set('filename', file).set('compress', true).render(function(err, css) {
+            var cssFile = file.replace(".styl", ".css");
+            fs.writeFile(cssFile, css, function(err) {
+              console.log("Created: "+cssFile);
+              cb2();
+            });
           });
         });
-      });
+      };
     };
     findFiles(cwd, /\.styl$/, function(files) {
-      files.forEach(compileFile);
+      var proc = [];
+      files.forEach(function(item) { proc.push(compileFile(item)); });
+      R.parallel(proc, cb);
     });
   };
 
 
-  var generateCoffee = function() { 
+  var generateCoffee = function(cb) { 
     var compileFile = function(file) {
-      fs.readFile(file, 'utf8', function(err, str) {
-        var js = coffeeScript.compile(str);
-        var jsFile = file.replace(".coffee", ".js");
-        fs.writeFile(jsFile, js, function(err) {
-          console.log("Created: "+jsFile);
+      return function(cb2) { 
+        fs.readFile(file, 'utf8', function(err, str) {
+          var js = coffeeScript.compile(str);
+          var jsFile = file.replace(".coffee", ".js");
+          fs.writeFile(jsFile, js, function(err) {
+            console.log("Created: "+jsFile);
+            cb2();
+          });
         });
-      });
+      };
     };
     findFiles(cwd, /\.coffee$/, function(files) {
-      files.forEach(compileFile); 
+      var proc = [];
+      files.forEach(function(item) { proc.push(compileFile(item)); });
+      R.parallel(proc, cb);
     });
 
   };
 
-  var generateIndex = function() {
+  var generateIndex = function(cb) {
     options.phonegap = true;
     if (config.settings.templateEngine == "jade") {
       var file = cwd+"/templates/index.jade";
@@ -124,14 +134,19 @@ if (args["--startapp"]) {
     }
   };
 
-  generateStylus();
-  generateCoffee();
-  generateIndex();
+  R.parallel([
+    generateStylus,
+    generateCoffee
+  ], function() {
+    options.smoosher = smoosher("smoosh.json", "production");
+    generateIndex();
+  });
 
     
 } else {
   options.config = config.web;
   options.build = "web";
+  options.smoosher = smoosher();
   app.configure(function() {
     app.use(express.methodOverride());
     app.use(express.bodyParser());
