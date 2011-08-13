@@ -50,7 +50,7 @@ if (args["--startapp"]) {
 } else if (args["--generate"]) {
   var b = args["--generate"];
   if (typeof b === "string")
-    build = b.toLowerCase();
+    build = b.toLowerCase().replace(/ /g, "");
   options.config = config[build];
   options.build = build;
   options.debug = (build != "release");

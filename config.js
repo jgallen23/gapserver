@@ -8,5 +8,7 @@ module.exports = {
   debug: {
   },
   release: {
+  },
+  adhoc: {
   }
 };
