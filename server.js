@@ -27,7 +27,7 @@ if (path.existsSync(cwd+"/config.js")) {
   extend(config, customConfig);
 }
 
-var port = 3000;
+var port = (args["--port"])?parseInt(args["--port"], 10):3000;
 
 var options = { 
   debug: false,
