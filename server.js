@@ -10,7 +10,7 @@ var ejs = require("ejs");
 var coffeeScript = require("coffee-script");
 var walk = require("walk");
 var smoosher = require("./smoosher");
-var R = require("resistance").R;
+var R = require("resistance");
 
 var cwd = process.cwd();
 
@@ -50,7 +50,7 @@ if (args["--startapp"]) {
 } else if (args["--generate"]) {
   var b = args["--generate"];
   if (typeof b === "string")
-    build = b.toLowerCase().replace(/ /g, "");
+    build = (b)?b.toLowerCase().replace(/ /g, ""):'debug';
   options.config = config[build];
   options.build = build;
   options.debug = (build != "release");
@@ -117,7 +117,7 @@ if (args["--startapp"]) {
     options.phonegap = true;
     if (config.settings.templateEngine == "jade") {
       var file = cwd+"/templates/index.jade";
-      jade.renderFile(file, { locals: options }, function(err, html) {
+      jade.renderFile(file, options, function(err, html) {
         if (err)
           throw err;
         fs.writeFile(cwd+"/index.html", html, function(err) {
