@@ -11,7 +11,7 @@
   "keywords": ["phonegap"],
   "dependencies": {
     "walk": "*",
-    "coffee-script": "*",
+    "coffee-script": ">=1.12.3",
     "express": "*",
     "jade": "*",
     "ejs": "*",
