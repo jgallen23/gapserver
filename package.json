@@ -12,7 +12,7 @@
   "dependencies": {
     "walk": "*",
     "coffee-script": "*",
-    "express": "*",
+    "express": ">=4.14.1",
     "jade": "*",
     "ejs": "*",
     "argsparser": "*",
