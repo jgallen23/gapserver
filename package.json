@@ -14,7 +14,7 @@
     "coffee-script": "*",
     "express": "*",
     "jade": "*",
-    "ejs": "*",
+    "ejs": ">=2.5.6",
     "argsparser": "*",
     "stylus": "*",
     "smoosh": "*",
